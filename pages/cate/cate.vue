@@ -1,10 +1,12 @@
 <template>
   <view>
+    <my-search @click="gotoSearch"></my-search>
     <view class="scroll-view-container">
       <scroll-view class="left-scroll-view" scroll-y="true" :style="{height: wh + 'px'}">
         <block v-for="(item, i) in cateList" :key="i">
           <view :class="['left-scroll-view-item', i === active ? 'active' : '']" @click="activeChange(i)">
-            {{item.cat_name}}</view>
+            {{item.cat_name}}
+          </view>
         </block>
 
       </scroll-view>
@@ -41,7 +43,8 @@
     },
     onLoad() {
       const sysInfo = uni.getSystemInfoSync()
-      this.wh = sysInfo.windowHeight
+      //搜索栏高度
+      this.wh = sysInfo.windowHeight - 50
 
       this.getCateList()
     },
@@ -58,13 +61,18 @@
         this.active = i
         //二级重新赋值
         this.cateLevel2 = this.cateList[i].children
-        
+
         this.scrollTop = this.scrollTop === 0 ? 1 : 0
       },
       //跳转商品列表页面
-      gotoGoodsList(item){
+      gotoGoodsList(item) {
         uni.navigateTo({
           url: '/subpkg/goods_list/goods_list?cid=' + item.cat_id
+        })
+      },
+      gotoSearch() {
+        uni.navigateTo({
+          url: '/subpkg/search/search'
         })
       }
     }
@@ -103,28 +111,32 @@
       }
     }
   }
-  .cate-lv2-title{
+
+  .cate-lv2-title {
     font-size: 12px;
     font-weight: bold;
     text-align: center;
     padding: 15px 0;
   }
-  .cate-lv3-list{
+
+  .cate-lv3-list {
     display: flex;
     flex-wrap: wrap;
-    
-    .cate-lv3-item{
+
+    .cate-lv3-item {
       width: 33.33%;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       margin-bottom: 10px;
-      image{
+
+      image {
         width: 60px;
         height: 60px;
       }
-      text{
+
+      text {
         font-size: 12px;
       }
     }
