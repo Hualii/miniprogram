@@ -1,14 +1,17 @@
 // #ifndef VUE3
 import Vue from 'vue'
 import App from './App'
-//导入网络请求
+import store from '@/store/store.js'
+//导入网络请求包
 import {
   $http
 } from '@escook/request-miniprogram'
+//挂载顶级对象
 uni.$http = $http
 
 $http.baseUrl = 'https://api-hmugo-web.itheima.net'
 // $http.baseUrl = 'https://applet-base-api-t.itheima.net'
+
 //请求拦截器
 $http.beforeRequest = function(options){
   uni.showLoading({
@@ -35,7 +38,8 @@ Vue.config.productionTip = false
 App.mpType = 'app'
 
 const app = new Vue({
-  ...App
+  ...App,
+  store
 })
 app.$mount()
 // #endif

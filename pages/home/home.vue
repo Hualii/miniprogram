@@ -1,12 +1,12 @@
 <template>
   <view>
     <view class="search-box">
-          <my-search @click="gotoSearch"></my-search>
+      <my-search @click="gotoSearch"></my-search>
     </view>
 
     <swiper :indicator-dots="true" :autoplay="true" :interval="3000" :duration="1000" :circular="true">
       <swiper-item v-for="(item, i) in swiperList" :key="i">
-        <navigator class="swiper-item" :url="'/subpkg/goods_detail/goods_detail?goods_id' + item.goods_id">
+        <navigator class="swiper-item" :url="'/subpkg/goods_detail/goods_detail?goods_id=' + item.goods_id">
           <image :src="item.image_src"></image>
         </navigator>
         <!--        <view class="swiper-item">
@@ -30,7 +30,8 @@
               mode="widthFix"></image>
           </navigator>
           <view class="right-img-box">
-            <navigator class="right-img-item" v-for="(item2, i2) in item.product_list" :key="i2" v-if="i2 !== 0" :url="item2.url">
+            <navigator class="right-img-item" v-for="(item2, i2) in item.product_list" :key="i2" v-if="i2 !== 0"
+              :url="item2.url">
               <image :src="item2.image_src" :style="{width: item2.image_width + 'rpx'}" mode="widthFix"></image>
             </navigator>
           </view>
@@ -45,7 +46,9 @@
 </template>
 
 <script>
+  import badgeMix from '@/mixins/tabbar-badge.js'
   export default {
+    mixins: [badgeMix],
     data() {
       return {
         //轮播图数据列表
@@ -68,7 +71,8 @@
         } = await uni.$http.get('/api/public/v1/home/swiperdata')
         if (res.meta.status !== 200) return uni.$showMsg()
         this.swiperList = res.message
-        // uni.$showMsg('数据请求成功!')
+        console.log(res)
+
       },
       async getNavList() {
         const {
@@ -76,13 +80,20 @@
         } = await uni.$http.get('/api/public/v1/home/catitems')
         if (res.meta.status !== 200) return uni.$showMsg()
         this.navList = res.message
-        // uni.$showMsg('数据请求成功!!!')
+        console.log(res)
       },
       navClickHander(item) {
+
         if (item.name === '分类') {
           uni.switchTab({
             url: '/pages/cate/cate'
           })
+        } else if (item.name === '秒杀拍') {
+          console.log("秒杀拍")
+        } else if (item.name === '超市购') {
+          console.log("超市购")
+        } else if (item.name === '母婴品') {
+          console.log("母婴品")
         }
       },
       //
@@ -92,19 +103,22 @@
         } = await uni.$http.get('/api/public/v1/home/floordata')
         if (res.meta.status !== 200) return uni.$showMsg()
         this.floorList = res.message
+        console.log(res)
         // uni.$showMsg('数据请求成功!!!')
-        res.message.forEach(floor =>{
-          floor.product_list.forEach(prod =>{
-            prod.url ='/subpkg/goods_list/goods_list?' + prod.navigator_url.split('?')[1]
+        res.message.forEach(floor => {
+          floor.product_list.forEach(prod => {
+            //增加一个url参数，获取url地址
+            prod.url = '/subpkg/goods_list/goods_list?' + prod.navigator_url.split('?')[1]
           })
         })
+        // console.log(this.floorList)
       },
-      gotoSearch(){
+      gotoSearch() {
         uni.navigateTo({
-          url:'/subpkg/search/search'
+          url: '/subpkg/search/search'
         })
       }
-      
+
     }
   }
 </script>
@@ -135,16 +149,19 @@
     width: 100%;
     height: 60rpx;
   }
-  .right-img-box{
+
+  .right-img-box {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
   }
-  .floor-img-box{
+
+  .floor-img-box {
     display: flex;
     padding-left: 10rpx;
   }
-  .search-box{
+
+  .search-box {
     position: sticky;
     top: 0;
     z-index: 999;
